@@ -1,30 +1,48 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateEventSchema, CreateEventSchemaType } from "@/shared/api";
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  UpdateEventSchemaType,
+  UpdateEventFormDataSchemaType,
+  UpdateEventSchema, CreateUserFormDataSchemaType, UpdateEventFormDataSchema,
+} from '@/shared/api'
 
-type CreateEventFormProps = {
-  onSubmit: (data: CreateEventSchemaType) => void;
-};
+type UpdateEventFormProps = {
+  initialFormData: UpdateEventFormDataSchemaType
+  onSubmit: (data: UpdateEventSchemaType) => void;
+}
 
-export const CreateEventForm = ({ onSubmit }: CreateEventFormProps) => {
+export const UpdateEventForm = ({initialFormData, onSubmit}: UpdateEventFormProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<CreateEventSchemaType>({
-    resolver: zodResolver(CreateEventSchema),
-    mode: "onChange",
-  });
+    formState: {errors},
+  } = useForm<UpdateEventFormDataSchemaType>({
+    resolver: zodResolver(UpdateEventFormDataSchema),
+    mode: 'onChange',
+    defaultValues: initialFormData,
+  })
+
+  function beforeSubmit(input: UpdateEventFormDataSchemaType): void {
+    const output: UpdateEventSchemaType = {
+      id: input.id,
+      title: input.title,
+      description: input.description,
+    }
+    if (input.date) {
+      output.date = new Date(input.date)
+    }
+    return onSubmit(output)
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(beforeSubmit)}>
       <div className="space-y-12">
         <div>
           <h2 className="text-base font-semibold leading-7 text-gray-900">
             Событие
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Заполните форму для создания события
+            Редактирование события
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -41,7 +59,7 @@ export const CreateEventForm = ({ onSubmit }: CreateEventFormProps) => {
                   id="title"
                   autoComplete="title"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("title")}
+                  {...register('title')}
                 />
               </div>
               {errors.title && (
@@ -63,7 +81,7 @@ export const CreateEventForm = ({ onSubmit }: CreateEventFormProps) => {
                   id="description"
                   rows={3}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("description")}
+                  {...register('description')}
                 />
               </div>
               {errors.description ? (
@@ -89,7 +107,7 @@ export const CreateEventForm = ({ onSubmit }: CreateEventFormProps) => {
                   id="date"
                   type="date"
                   className="block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("date")}
+                  {...register('date')}
                 />
               </div>
               {errors.date && (
@@ -107,15 +125,15 @@ export const CreateEventForm = ({ onSubmit }: CreateEventFormProps) => {
           type="button"
           className="text-sm font-semibold leading-6 text-gray-900"
         >
-          Отмена
+          Cancel
         </button>
         <button
           type="submit"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Создать
+          Update
         </button>
       </div>
     </form>
-  );
-};
+  )
+}

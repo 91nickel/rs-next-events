@@ -1,22 +1,27 @@
-import Image from "next/image";
-import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
-type EventCardProps = {
+export type EventCardProps = {
   id: number;
+  authorId: number;
   title: string;
   description: string | null;
   date: Date;
-  action: ReactNode;
+  isJoined: boolean
+  action?: ReactNode;
+  update?: boolean;
 };
 
-export const EventCard = ({
-  id,
-  title,
-  description,
-  date,
-  action,
-}: EventCardProps) => {
+export const EventCard = (
+  {
+    id,
+    title,
+    description,
+    date,
+    action,
+    update
+  }: EventCardProps) => {
   return (
     <div className="flex font-sans rounded-lg shadow-xl overflow-hidden">
       <div className="flex-none w-48 relative">
@@ -46,11 +51,20 @@ export const EventCard = ({
               href={`/events/${id}`}
               className="h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900 align-middle leading-10"
             >
-              Подробнее
+              Info
             </Link>
+            {
+              update
+              && <Link
+                    href={`/events/update/${id}`}
+                    className="bg-yellow-400 hover:bg-yellow-600 h-10 px-6 font-semibold rounded-md border border-slate-200 text-slate-900 align-middle leading-10"
+                >
+                    Update
+                </Link>
+            }
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

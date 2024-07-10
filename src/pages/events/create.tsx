@@ -1,5 +1,5 @@
 import { CreateEventForm } from "@/features/create-event";
-import { CreateEventSchema, trpc } from "@/shared/api";
+import { CreateEventSchemaType, trpc } from "@/shared/api";
 import { useRouter } from "next/router";
 
 export default function CreateEvent() {
@@ -11,7 +11,7 @@ export default function CreateEvent() {
     },
   });
 
-  const handleSubmit = (data: CreateEventSchema) => {
+  const handleSubmit = (data: CreateEventSchemaType) => {
     mutate(data);
   };
 
