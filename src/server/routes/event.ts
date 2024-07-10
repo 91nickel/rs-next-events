@@ -1,4 +1,4 @@
-import { CreateEventSchema, JoinEventSchema } from "@/shared/api";
+import { CreateEventSchema, UpdateEventSchema, JoinEventSchema, LeaveEventSchema } from "@/shared/api";
 import { prisma } from "../db";
 import { isAuth, procedure, router } from "../trpc";
 import { z } from "zod";
@@ -16,20 +16,23 @@ export const eventRouter = router({
       isJoined: participations.some(({ userId }) => userId === user?.id),
     }));
   }),
+
   findUnique: procedure
     .input(
       z.object({
         id: z.number(),
       })
     )
-    .use(isAuth)
+    // .use(isAuth)
     .query(({ input }) => {
       return prisma.event.findUnique({
         where: input,
         select: {
+          id: true,
           title: true,
           description: true,
           date: true,
+          authorId: true,
           participations: {
             select: {
               user: {
@@ -42,6 +45,7 @@ export const eventRouter = router({
         },
       });
     }),
+
   create: procedure
     .input(CreateEventSchema)
     .use(isAuth)
@@ -53,15 +57,39 @@ export const eventRouter = router({
         },
       });
     }),
-  join: procedure
-    .input(JoinEventSchema)
+
+  update: procedure
+    .input(UpdateEventSchema)
     .use(isAuth)
     .mutation(({ input, ctx: { user } }) => {
-      return prisma.participation.create({
+      return prisma.event.update({
+        where: {
+          id: input.id
+        },
         data: {
-          eventId: input.id,
-          userId: user.id,
+          ...input,
         },
       });
     }),
+
+  // join: procedure
+  //   .input(JoinEventSchema)
+  //   .use(isAuth)
+  //   .mutation(({ input, ctx: { user } }) => {
+  //     return prisma.participation.create({
+  //       data: {
+  //         eventId: input.id,
+  //         userId: user.id,
+  //       },
+  //     });
+  //   }),
+
+  // leave: procedure
+  //   .input(LeaveEventSchema)
+  //   .use(isAuth)
+  //   .mutation(({ input, ctx: { user } }) => {
+  //     return prisma.participation.delete({
+  //       where: {}
+  //     });
+  //   }),
 });

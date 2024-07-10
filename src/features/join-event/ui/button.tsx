@@ -9,10 +9,10 @@ export const JoinEventButton = ({
   eventId,
   onSuccess,
 }: JoinEventButtonProps) => {
-  const { mutate } = trpc.event.join.useMutation({ onSuccess });
+  const { mutate } = trpc.participation.create.useMutation({ onSuccess });
 
   const handleClick = () => {
-    mutate({ id: eventId });
+    mutate({ eventId });
   };
 
   return (
@@ -20,7 +20,7 @@ export const JoinEventButton = ({
       className="h-10 px-6 font-semibold rounded-md bg-black text-white"
       onClick={handleClick}
     >
-      Присоединиться
+      Participate
     </button>
   );
 };

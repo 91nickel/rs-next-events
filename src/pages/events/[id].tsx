@@ -1,7 +1,7 @@
 import { EventDetail } from "@/entities/event";
-import { trpc } from "@/shared/api";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
+import { trpc } from "@/shared/api";
 
 export default function Event() {
   const router = useRouter();
@@ -15,9 +15,9 @@ export default function Event() {
     return "Loading...";
   }
 
-  if (session.status === "unauthenticated") {
-    return "Forbidden";
-  }
+  // if (session.status === "unauthenticated") {
+  //   return "Forbidden";
+  // }
 
   if (!data) {
     return "No data";

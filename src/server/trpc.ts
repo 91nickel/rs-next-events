@@ -22,3 +22,13 @@ export const isAuth = t.middleware(async (opts) => {
     },
   });
 });
+
+export const isNotAuth = t.middleware(async (opts) => {
+  const { ctx } = opts;
+
+  if (ctx.user) {
+    throw new TRPCError({ code: 'CONFLICT' , message: 'User already authorized' });
+  }
+
+  return opts.next();
+});
